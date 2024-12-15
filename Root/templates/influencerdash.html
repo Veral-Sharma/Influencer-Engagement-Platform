@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Influencer Dashboard</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('/static/background.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #000;
+        }
+
+        .header a {
+            color: #03e9f4;
+            text-decoration: none;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .header .logout {
+            margin-left: 5px;
+            margin-right: 27px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 80px 20px 20px;
+            gap: 10px;
+        }
+
+        .left-box, .right-box {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            overflow: auto;
+        }
+
+        .left-box {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .right-box {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .left-box img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .left-box button {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #03e9f4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .left-box button:hover {
+            background-color: #02c3e2;
+        }
+
+        .left-box h2 {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #fff;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        .accept-button {
+            background-color: green;  /* Green background */
+            color: white;  /* White text */
+            border: none;  /* No border */
+            padding: 10px 15px;  /* Padding */
+            cursor: pointer;  /* Pointer cursor on hover */
+            border-radius: 5px;  /* Rounded corners */
+        }
+
+        .accept-button:hover {
+            background-color: darkgreen;  /* Darker green on hover */
+        }
+
+        .negotiate-button {
+            background-color: orange;  /* Orange background */
+            color: white;  /* White text */
+            border: none;  /* No border */
+            padding: 10px 15px;  /* Padding */
+            cursor: pointer;  /* Pointer cursor on hover */
+            border-radius: 5px;  /* Rounded corners */
+            text-decoration: none;
+        }
+
+        .negotiate-button:hover {
+            background-color: darkorange;  /* Darker orange on hover */
+        }
+        .negotiate-form {
+            display: none; /* Hidden by default */
+            margin-top: 10px;
+        }
+
+        /* Checkbox to control visibility */
+        input[type="checkbox"] {
+            display: none; /* Hide the checkbox */
+        }
+
+        input[type="checkbox"]:checked + .negotiate-form {
+            display: table-row; /* Show the form when checked */
+        }
+
+        .reject-button {
+            background-color: red;  /* Red background */
+            color: white;  /* White text */
+            border: none;  /* No border */
+            padding: 10px 15px;  /* Padding */
+            cursor: pointer;  /* Pointer cursor on hover */
+            border-radius: 5px;  /* Rounded corners */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Influencer</h1>
+        <i><h1 style="text-align:center">WELCOME {{ current_user.name }}</h1></i>
+        <div>
+            <a href="{{ url_for('influencerdash') }}">Profile</a>
+            <a href="{{ url_for('influsearch') }}">Search</a>
+            <a href="{{ url_for('influstats') }}">Stats</a>
+            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="left-box">
+            <form action="{{ url_for('upload_image') }}" method="post" enctype="multipart/form-data">
+                <input type="file" id="fileInput" name="image" style="display: block; margin-bottom: 10px;">
+                <button type="submit">Upload Image</button>
+            </form>
+            <img src="{{ url_for('static', filename='uploads/' + (current_user.influencer.image or 'default-profile.png')) }}" alt="Profile Image">
+            <h2>{{ current_user.name }}</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Niche</th>
+                            <th>Reach</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ current_user.influencer.niche }}</td>
+                            <td>{{ current_user.influencer.reach }}</td>
+                            <td>{{ current_user.influencer.rating }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="right-box">
+            <div class="table-container">
+                <h2>Pending Requests</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Campaign</th>
+                            <th>Task</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                            <th>Asked Amount (in Rs.)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in pending_requests %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ request.campaign_name }}</td>
+                            <td>{{ request.campaign_task }}</td>
+                            <td>{{ request.message }}</td>
+                            <td>{{ request.status }}</td>
+                            <td>{{ request.payment_amount }}</td>
+                            <td>
+                                {% if request.status == 'Pending' %}
+                                    <form action="{{ url_for('accept_request', request_id=request.id) }}" method="post" style="display:inline;">
+                                        <button type="submit" class="accept-button" onclick="return confirm('Are you sure you want to accept this request?');">Accept</button>
+                                    </form>
+                                    <a href="{{ url_for('influnegotiate', request_id=request.id) }}" class="negotiate-button">Negotiate</a>
+                                    <form action="{{ url_for('reject_request', request_id=request.id) }}" method="post" style="display:inline;">
+                                        <button type="submit" class="reject-button" onclick="return confirm('Are you sure you want to reject this request?');">Reject</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7">No pending requests.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <h2>Sent Requests</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Campaign</th>
+                            <th>Status</th>
+                            <th>Payment Amount (in Rs.)</th>
+                            <th>Negotiation Amount (in Rs.)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in sent_requests %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ request.campaign_name }}</td>
+                            <td>{{ request.status }}</td>
+                            <td>{{ request.payment_amount }}</td>
+                            <td>{{ request.negotiation if request.negotiation else 'N/A' }}</td>
+                            <td>
+                                {% if request.status == 'Pending' and request.negotiation and request.negotiation != 'N/A' %}
+                                    <form action="{{ url_for('accept_negotiation') }}" method="post" style="display:inline;">
+                                        <input type="hidden" name="request_id" value="{{ request.id }}">
+                                        <input type="hidden" name="request_type" value="requesttt">
+                                        <button type="submit" class="accept-button" onclick="return confirm('Are you sure you want to accept this negotiation?');">Accept Negotiation</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6">No sent requests.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-container">
+                <h2>Accepted Requests</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Campaign Task</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in accepted_requests %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ request.campaign_task }}</td>
+                                <td>{{ request.message }}</td>
+                                <td>{{ request.status }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4">No accepted requests.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

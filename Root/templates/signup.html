@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Influencer Platform - Sign Up</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('/static/background.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .signup-box {
+            width: 350px;
+            padding: 50px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .signup-box h1 {
+            margin: -50px 0 30px;
+            padding: 0;
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .signup-box h2 {
+            margin: -15px 0 20px;
+            padding: 0;
+            color: #fff;
+            text-align: center;
+        }
+
+        .signup-box .user-box {
+            position: relative;
+        }
+
+        .signup-box .user-box input,
+        .signup-box .user-box select {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 30px;
+            border: none;
+            border-bottom: 1px solid #fff;
+            outline: none;
+            background: transparent;
+        }
+
+        .signup-box .user-box label {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            padding: 10px 0;
+            font-size: 12px;
+            color: #03e9f4;
+            pointer-events: none;
+            transition: 0.5s;
+        }
+
+        .signup-box .user-box input:focus ~ label,
+        .signup-box .user-box input:valid ~ label,
+        .signup-box .user-box select:focus ~ label,
+        .signup-box .user-box select:valid ~ label {
+            top: -20px;
+            left: 0;
+            color: #03e9f4;
+            font-size: 12px;
+        }
+
+        .signup-box a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 16px;
+            line-height: 20px;
+            transition: 0.5s;
+            margin-top: 20px;
+            display: block;
+            text-align: center;
+        }
+
+        .signup-box a:hover {
+            color: #03e9f4;
+        }
+
+        .signup-box button {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            background: #03e9f4;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.5s;
+            display: block;
+            margin: 20px auto 0;
+        }
+
+        .signup-box button:hover {
+            background: #0395c9;
+        }
+
+        .flashes {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .flashes li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: #fff;
+            animation: fadeIn 1s;
+        }
+
+        .flashes .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .flashes .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-box">
+        <h1>
+            <svg viewBox="0 0 200 40">
+                <defs>
+                    <linearGradient id="text-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#000;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#808080;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <text x="0" y="35" font-family="Arial, Helvetica, sans-serif" font-size="33" fill="url(#text-gradient)"> I n f l u H u b</text>
+            </svg>
+        </h1>
+        <h2>Sign Up</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('signup') }}" method="POST">
+            <div class="user-box">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="user-box">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="user-box">
+                <label for="user_type">Role</label>
+                <select id="user_type" name="user_type" required>
+                    <option value="" disabled selected>Select User Type</option>
+                    <option value="sponsor">Sponsor</option>
+                    <option value="influencer">Influencer</option>
+                </select>
+            </div>
+            <div class="user-box">
+                <label for="niche">Niche</label>
+                <select id="niche" name="niche" required>
+                    <option value="" disabled selected>Select Niche</option>
+                    <option value="tech">Tech</option>
+                    <option value="fashion_beauty">Fashion and Beauty</option>
+                    <option value="fitness">Fitness</option>
+                    <option value="travel">Travel</option>
+                    <option value="food">Food</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="finance_investing">Finance and Investing</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="others">Others</option>
+                </select>
+            </div>
+            <div class="user-box">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <a href="{{ url_for('login') }}">Already have an account? Login</a>
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+</body>
+</html>

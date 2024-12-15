@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile View</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('/static/background.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #000;
+        }
+
+        .header a {
+            color: #03e9f4;
+            text-decoration: none;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .header .logout {
+            margin-left: 5px;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px 20px;
+            margin-top: 60px; /* Adjust to avoid overlapping with fixed header */
+        }
+
+        .glass-box {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            width: 80%;
+            max-width: 800px;
+            text-align: center; /* Center align text and image */
+        }
+
+        .glass-box img {
+            max-width: 150px; /* Set a max width for the profile image */
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .glass-box h1 {
+            margin: 10px 0;
+        }
+
+        .table-container {
+            margin-top: 20px;
+            text-align: left; /* Align table text to the left */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+            border: 1px solid #fff;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .send-request-button {
+            margin-top: 20px;
+            background-color: #03e9f4;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .request-form {
+            display: none;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        input[type="checkbox"]:checked ~ .request-form {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .form-group input::placeholder, .form-group textarea::placeholder {
+            color: #aaa;
+        }
+
+        .submit-button {
+            text-align: center;
+        }
+
+        .submit-button button {
+            background-color: #03e9f4;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Profile View</h1>
+        <div>
+            <a href="{{ url_for('influencerdash') }}">Profile</a>
+            <a href="{{ url_for('influsearch') }}">Search</a>
+            <a href="{{ url_for('stats') }}">Stats</a>
+            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="glass-box">
+            <img src="{{ url_for('static', filename='uploads/' + (user.influencer.image if user.user_type == 'influencer' and user.influencer and user.influencer.image else 'default-profile.png')) }}" alt="Profile Image">
+            <h1>{{ user.name }}</h1>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Niche</th>
+                            {% if user.user_type == 'influencer' %}
+                                <th>Reach</th>
+                                <th>Rating</th>
+                            {% elif user.user_type == 'sponsor' %}
+                                <th>Campaign Name</th>
+                                <th>Description</th>
+                                <th>Budget</th>
+                                <th>Goal</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if user.user_type == 'influencer' %}
+                            <tr>
+                                <td>{{ user.influencer.niche }}</td>
+                                <td>{{ user.influencer.reach }}</td>
+                                <td>{{ user.influencer.rating }}</td>
+                            </tr>
+                        {% elif user.user_type == 'sponsor' %}
+                            {% if user.sponsor and user.sponsor.campaigns %}
+                                {% for campaign in user.sponsor.campaigns %}
+                                    <tr>
+                                        <td>{{ user.sponsor.niche }}</td>
+                                        <td>{{ campaign.name }}</td>
+                                        <td>{{ campaign.description }}</td>
+                                        <td>{{ campaign.budget }}</td>
+                                        <td>{{ campaign.goal }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5">No active campaigns</td>
+                                </tr>
+                            {% endif %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            {% if user.user_type == 'influencer' and current_user.user_type == 'sponsor' %}
+                <br><br>
+                <input type="checkbox" id="showRequestForm">
+                <label class="send-request-button" for="showRequestForm">Send Request</label>
+                <div class="request-form">
+                    <form action="{{ url_for('send_request', user_id=user.id) }}" method="post">
+                        <div class="form-group">
+                            <label for="campaignTask">Campaign Task</label>
+                            <input type="text" id="campaignTask" name="campaignTask" placeholder="Enter campaign task" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="4" placeholder="Enter your message" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="askedAmount">Asked Amount (in Rs.)</label>
+                            <input type="number" id="askedAmount" name="askedAmount" placeholder="Enter asked amount" required>
+                        </div>
+                        <div class="submit-button">
+                            <button type="submit">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

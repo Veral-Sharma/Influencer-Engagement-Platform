@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('/static/background.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #000;
+        }
+
+        .header a {
+            color: #03e9f4;
+            text-decoration: none;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .header .logout {
+            margin-left: 5px;
+            margin-right: 27px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            padding: 60px 20px 20px;
+            height: calc(100vh - 80px);
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+            margin-bottom: 10px;
+        }
+
+        .flash-message.success {
+            background-color: #4CAF50;
+        }
+
+        .flash-message.error {
+            background-color: #f44336;
+        }
+
+        .flash-message.fade-out-delayed {
+            animation: fadeOut 2.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .box-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .box {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+
+        .box h2 {
+            text-align: center;
+            margin-top: 0;
+            background-color: black;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #fff;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        .flag-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px 2px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .flag-button:hover {
+            background-color: #d32f2f;
+        }
+        .unflag-button {
+            background-color: #4CAF50; /* Green background */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px 2px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        .unflag-button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Admin</h1>
+        <i><h1 style="text-align:center">WELCOME {{ current_user.name }}</h1></i>
+        <div>
+            <a href="{{ url_for('admindash') }}">Info</a>
+            <a href="{{ url_for('adminsearch') }}">Search</a>
+            <a href="{{ url_for('adminstats') }}">Stats</a>
+            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }} fade-out-delayed">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="box-container">
+            <div class="box">
+                <h2>Ongoing Campaigns</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No:</th>
+                            <th>Campaign</th>
+                            <th>Status</th>
+                            <th>Sponsor</th>
+                            <th>Budget</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for campaign in ongoing_campaigns %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ campaign.name }}</td>
+                                <td>{{ campaign.visibility }}</td>
+                                <td>{{ campaign.sponsor_name }}</td>
+                                <td>{{ campaign.budget }}</td>
+                                <td>
+                                    <form action="{{ url_for('flag_campaign') }}" method="post">
+                                        <input type="hidden" name="campaign_id" value="{{ campaign.id }}">
+                                        <button type="submit" class="flag-button">Flag</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5">No campaigns found</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="box">
+                <h2>Flagged Campaigns</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Campaign ID</th>
+                            <th>Name</th>
+                            <th>Sponsor</th>
+                            <th>Reason</th>
+                            <th>Date Flagged</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for campaign in flagged_campaigns %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ campaign.name }}</td>
+                                <td>{{ campaign.sponsor_name }}</td>
+                                <td>{{ campaign.flag_reason }}</td>
+                                <td>{{ campaign.flag_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                <td>
+                                    <form action="{{ url_for('unflag_campaign', campaign_id=campaign.id) }}" method="post" style="display:inline;">
+                                        <button type="submit" class="unflag-button" onclick="return confirm('Are you sure you want to unflag this campaign?');">Unflag Campaign</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5">No flagged campaigns</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

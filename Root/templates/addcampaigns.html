@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Campaign</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('/static/background.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #000;
+        }
+
+        .header a {
+            color: #03e9f4;
+            text-decoration: none;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .header .logout {
+            margin-left: 5px;
+            margin-right: 27px;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px 20px; /* Adjusted padding for space below the header */
+        }
+
+        .glass-box {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            width: 80%;
+            max-width: 800px; /* Adjusted max-width as needed */
+            overflow: auto;
+        }
+
+        .glass-box h1 {
+            text-align: center;
+            margin: 0 0 20px;
+            color: white;
+            background-color: black; /* Set background color to black */
+            padding: 10px; /* Add padding for better appearance */
+            border-radius: 5px; /* Optional: rounded corners */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+
+        .add-button {
+            text-align: center;
+        }
+
+        .add-button a {
+            background-color: #03e9f4;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: inline-block;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sponsor</h1>
+        <i><h1 style="text-align:center">WELCOME {{ current_user.name }}</h1></i>
+        <div>
+            <a href="{{ url_for('sponsordash') }}">Profile</a>
+            <a href="{{ url_for('campaigns') }}">Campaigns</a>
+            <a href="{{ url_for('search') }}">Search</a>
+            <a href="{{ url_for('stats') }}">Stats</a>
+            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="glass-box">
+            <h1>Add Campaign</h1>
+            <form action="{{ url_for('campaigns') }}" method="post">
+                <div class="form-group">
+                    <label for="name">Campaign Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter campaign name" required>
+                </div>
+                <div class="form-group">
+                    <label for="budget">Budget</label>
+                    <input type="number" id="budget" name="budget" placeholder="Enter budget" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" name="description" placeholder="Enter description" required>
+                </div>
+                <div class="form-group">
+                    <label for="goal">Goal</label>
+                    <input type="text" id="goal" name="goal" placeholder="Enter goal" required>
+                </div>
+                <div class="form-group">
+                    <label for="visibility">Visibility</label>
+                    <select id="visibility" name="visibility" required>
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                    </select>
+                </div>
+                <div class="add-button">
+                    <button type="submit">Add Campaign</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

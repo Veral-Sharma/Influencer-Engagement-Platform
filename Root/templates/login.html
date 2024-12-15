@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Influencer Platform - Login</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('/static/background.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .login-box {
+            width: 350px;
+            padding: 50px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-box h1 {
+            margin: -50px 0 30px;
+            padding: 0;
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .login-box h2 {
+            margin: -15px 0 20px;
+            padding: 0;
+            color: #fff;
+            text-align: center;
+        }
+
+        .login-box .user-box {
+            position: relative;
+        }
+
+        .login-box .user-box input,
+        .login-box .user-box select {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 30px;
+            border: none;
+            border-bottom: 1px solid #fff;
+            outline: none;
+            background: transparent;
+        }
+
+        .login-box .user-box label {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            padding: 10px 0;
+            font-size: 12px;
+            color: #03e9f4;
+            pointer-events: none;
+            transition: 0.5s;
+        }
+
+        .login-box .user-box input:focus ~ label,
+        .login-box .user-box input:valid ~ label,
+        .login-box .user-box select:focus ~ label,
+        .login-box .user-box select:valid ~ label {
+            top: -20px;
+            left: 0;
+            color: #03e9f4;
+            font-size: 12px;
+        }
+
+        .login-box a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 16px;
+            line-height: 20px;
+            transition: 0.5s;
+            margin-top: 20px;
+            display: block;
+            text-align: center;
+        }
+
+        .login-box a:hover {
+            color: #03e9f4;
+        }
+
+        .login-box button {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            background: #03e9f4;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.5s;
+            display: block;
+            margin: 20px auto 0;
+        }
+
+        .login-box button:hover {
+            background: #0395c9;
+        }
+
+        .flashes {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .flashes li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: #fff;
+            animation: fadeIn 1s;
+        }
+
+        .flashes .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .flashes .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .flash-message.fade-out-delayed {
+            animation: fadeOut 2.5s forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>
+            <svg viewBox="0 0 200 40">
+                <defs>
+                    <linearGradient id="text-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#000;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#808080;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <text x="0" y="35" font-family="Arial, Helvetica, sans-serif" font-size="33" fill="url(#text-gradient)"> I n f l u H u b</text>
+            </svg>
+        </h1>
+        <h2>Login</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('login_post') }}" method="POST">
+            <div class="user-box">
+                <label for="user_type">Role</label>
+                <select id="user_type" name="user_type" required>
+                    <option value="" disabled selected>Select User Type</option>
+                    <option value="admin">Admin</option>
+                    <option value="sponsor">Sponsor</option>
+                    <option value="influencer">Influencer</option>
+                </select>
+            </div>
+            <div class="user-box">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="user-box">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <a href="{{ url_for('signup') }}">No account? Sign up</a>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>

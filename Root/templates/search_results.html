@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('/static/background.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+        .header h1 {
+            margin: 0;
+            color: #000;
+        }
+        .header a {
+            color: #03e9f4;
+            text-decoration: none;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+        .header .logout {
+            margin-left: 5px;
+            margin-right: 27px;
+        }
+        .container {
+            padding: 80px 20px 20px; /* Adjusted padding for space below the header */
+        }
+        .glass-box {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            max-width: 800px; /* Adjusted max-width as needed */
+            margin: 0 auto;
+            overflow: auto;
+        }
+        .glass-box h1 {
+            text-align: center;
+            margin: 0 0 20px;
+            color: white;
+            background-color: black; /* Set background color to black */
+            padding: 10px; /* Add padding for better appearance */
+            border-radius: 5px; /* Optional: rounded corners */
+        }
+        .results-list {
+            list-style: none;
+            padding: 0;
+        }
+        .results-list li {
+            margin-bottom: 10px;
+        }
+        .results-list a {
+            color: #03e9f4;
+            text-decoration: none;
+        }
+        .results-list a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sponsor</h1>
+        <i><h1 style="text-align:center">WELCOME {{ current_user.name }}</h1></i>
+        <div>
+            <a href="{{ url_for('sponsordash') }}">Profile</a>
+            <a href="{{ url_for('campaigns') }}">Campaigns</a>
+            <a href="{{ url_for('search') }}">Search</a>
+            <a href="{{ url_for('stats') }}">Stats</a>
+            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="glass-box">
+            <h1>Search Results for "{{ query }}"</h1>
+            <ul class="results-list">
+                {% for user in results %}
+                    <li><a href="{{ url_for('profile_view', user_id=user.id) }}">{{ user.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaigns</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('/static/background.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #000;
+        }
+
+        .header a {
+            color: #03e9f4;
+            text-decoration: none;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .header .logout {
+            margin-left: 5px;
+            margin-right: 27px;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px 20px; /* Adjusted padding for space below the header */
+        }
+
+        .glass-box {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            width: 80%;
+            max-width: 1200px; /* Adjusted max-width as needed */
+            overflow: auto;
+        }
+
+        .glass-box h1 {
+            text-align: center;
+            margin: 0 0 20px;
+            color: white;
+            background-color: black; /* Set background color to black */
+            padding: 10px; /* Add padding for better appearance */
+            border-radius: 5px; /* Optional: rounded corners */
+        }
+
+        .add-button {
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .add-button a {
+            background-color: #03e9f4;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: inline-block;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #fff;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.5); /* Match the background color of the sponsor dashboard */
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome {
+            text-align: center;
+            padding: 20px;
+            background-color: black;
+            color: white;
+            position: relative;
+            top: 20px;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sponsor</h1>
+        <i><h1 style="text-align:center">WELCOME {{ current_user.name }}</h1></i>
+        <div>
+            <a href="{{ url_for('sponsordash') }}">Profile</a>
+            <a href="{{ url_for('campaigns') }}">Campaigns</a>
+            <a href="{{ url_for('search') }}">Search</a>
+            <a href="{{ url_for('stats') }}">Stats</a>
+            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="glass-box">
+            <h1>Campaigns</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campaign Name</th>
+                        <th>Budget</th>
+                        <th>Description</th>
+                        <th>Goal</th>
+                        <th>Visibility</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for campaign in campaigns %}
+                    <tr>
+                        <td>{{ campaign.name }}</td>
+                        <td>{{ campaign.budget }}</td>
+                        <td>{{ campaign.description }}</td>
+                        <td>{{ campaign.visibility }}</td>
+                        <td>{{ campaign.goal }}</td>
+                        <td>
+                            <!-- Delete Form -->
+                            <form action="{{ url_for('delete_campaign', campaign_id=campaign.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this campaign?');">Delete</button>
+                            </form>
+                            <!-- Update Form -->
+                            <form action="{{ url_for('update_campaign', campaign_id=campaign.id) }}" method="get" style="display:inline;">
+                                <button type="submit" class="delete-button" style="background-color: #f39c12;">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="add-button">
+                <a href="{{ url_for('addcampaigns') }}">+ Add Campaign</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
